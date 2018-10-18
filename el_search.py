@@ -4,6 +4,10 @@ import pandas as pd
 from pprint import pprint
 from elasticsearch import Elasticsearch, helpers
 
+# Delete ES data for windows:
+# curl -X DELETE "http://localhost:9200/_all"
+
+
 # es = Elasticsearch(hosts=["http://localhost:9200/"])
 
 def el_search(query, data, host):
