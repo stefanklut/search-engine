@@ -10,43 +10,64 @@ from elasticsearch import Elasticsearch, helpers
 
 # es = Elasticsearch(hosts=["http://localhost:9200/"])
 
-def el_search(query, data, host):
-    es = Elasticsearch(hosts=[args.h])
-    df = pd.read_csv(data)
+def el_search(query, data, host, init):
+    es = Elasticsearch(hosts=[host])
+    df = pd.read_csv(data, encoding="utf8")
 
-    g = generator(df.head(100), es)
+    # print("q:", query)
+    # print("d:", data)
+    # print("h:", host)
+    # print("i:", init)
 
-    # Add index
-    if not es.indices.exists(index="stackoverflow"):
-        es.indices.create("stackoverflow")
+    if init:
+        import time
+        s = time.time()
+        init_es(df.head(1000), host)
+        print(time.time() - s)
 
     # Creates a bulk, why would we though????
-    b = helpers.bulk(es, g)
+    # b = helpers.bulk(es, g)
+
+    # print(b)
 
     q = {
             "query": {
                 "match": {
-                    "title":query[0]
+                    "title":"".join(query)
                 }
             }
         }
-    res = es.search(index="stackoverflow", doc_type="foo", body=q)
-    pprint(res["hits"]["hits"])
+    res = es.search(index="stackoverflow", doc_type="question", body=q)
+    # res = res["hits"]["hits"][0]["_source"]["id"]
+    # pprint(res)
 
-def generator(data, es):
-    for col_id,x in data.iterrows():
+
+def generator(df, es):
+    for col_id,x in df.iterrows():
         _index = "stackoverflow"
-        _type = "foo"
+        _type = "question"
         _id = x["Id"]
         _title = x["Title"]
         _body = x["Body"]
         yield {"_index":_index, "_type":_type, "id":_id, "title":_title,
                "body":_body}
-        q = {"id":_id, "title":_title, "body":_body}
-        es.index(index="stackoverflow", doc_type="foo", id=col_id, body=q)
 
-def process_query():
-    pass
+
+def init_es(df, host):
+    es = Elasticsearch(hosts=[host])
+
+    _index = "stackoverflow"
+    _type = "question"
+
+    # Add index
+    if not es.indices.exists(index=_index):
+        es.indices.create(_index)
+
+    for col_id,x in df.iterrows():
+        b = {"id":x["Id"], "title":x["Title"], "body":x["Body"]}
+        es.index(index=_index, doc_type=_type, id=col_id, body=b)
+    
+
 
 if __name__=="__main__":
     import sys
@@ -58,6 +79,8 @@ if __name__=="__main__":
                    default="data/Questions.csv", type=str)
     p.add_argument("--h", help="search engine host", \
                    default="http://localhost:9200/", type=str)
+    p.add_argument("--i", help="init elastic search", \
+                   default=False, type=bool)
     args = p.parse_args(sys.argv[1:])
 
-    el_search(args.query, args.d, args.h)
+    el_search(args.query, args.d, args.h, args.i)
