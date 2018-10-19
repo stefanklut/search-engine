@@ -1,13 +1,25 @@
+<style>
+p {
+    text-indent: 5px;
+}
+</style>
+
 <form action="/" method="post">
 <input type="text" name="term" size="30">
 <input type="hidden" name="Capital" value="False">
 <input type="checkbox" name="Capital" value="True"> Capital letter
-<input type="hidden" name="Capital" value="False">
+<input type="hidden" name="Wah" value="False">
 <input type="checkbox" name="Wah" value="True"> Wah
 <input type="submit" value="Search">
 </form><hr>
 {% if result %}
 	{% for res in result %}
-	<li>{{ res }}</li>
+		<div>
+		<li>
+		{% for r in res %}
+			{{r}}<br>
+		{% endfor %}
+	</li>
+	</div>
 	{% endfor %}
 {% endif %}
