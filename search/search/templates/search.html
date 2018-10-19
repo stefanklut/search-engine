@@ -1,5 +1,10 @@
 <form action="/" method="post">
-<input type="text" name="term" size="30"> <input type="submit" value="Search">
+<input type="text" name="term" size="30">
+<input type="hidden" name="Capital" value="False">
+<input type="checkbox" name="Capital" value="True"> Capital letter
+<input type="hidden" name="Capital" value="False">
+<input type="checkbox" name="Wah" value="True"> Wah
+<input type="submit" value="Search">
 </form><hr>
 {% if result %}
 	{% for res in result %}
