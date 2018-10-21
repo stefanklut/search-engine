@@ -29,10 +29,17 @@
 	color: black;
 	background-color: orange;
 }
+.search-bar input[type=checkbox] {
+	display: block;
+}
+.search-buttons {
+
+}
 .row {
 	float: left;
 	padding-left: 30px;
 	padding-bottom: 20px;
+	width: 100%
 }
 .row a{
 	text-decoration: none;
@@ -61,13 +68,17 @@
 </style>
 
 <div class="logo"> R StackOverflow </div>
-<form action="/" method="post" class="search-bar">
-	<input type="text" name="term" placeholder="Search.." size="40">
-	<input type="submit" value="Search">
-	<input type="hidden" name="Capital" value="False">
-	<input type="checkbox" name="Capital" value="True"> Capital letter
-	<input type="hidden" name="Wah" value="False">
-	<input type="checkbox" name="Wah" value="True"> Wah
+<form action="/" method="post">
+	<div class="search-bar">
+		<input type="text" name="term" placeholder="Search..">
+		<input type="submit" value="Search">
+	</div>
+	<div class="search-buttons">
+		<input type="hidden" name="Capital" value="False">
+		<input type="checkbox" name="Capital" value="True"> Capital letter
+		<input type="hidden" name="Wah" value="False">
+		<input type="checkbox" name="Wah" value="True"> Wah
+	</div>
 </form><hr>
 {% if result and result|length%}
 	<div class="split">
