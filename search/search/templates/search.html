@@ -1,25 +1,91 @@
 <style>
-p {
-    text-indent: 5px;
+.logo {
+	display: inline;
+	font-family: arial;
+	font-weight: bold;
+	font-size: 30;
+	padding-left: 5px
+}
+.search-bar {
+	display: flex;
+	width: 50%;
+	padding-left: 5px;
+	padding-right: 10px;
+}
+.search-bar input[type=text] {
+	flex: 1;
+    background-color: white;
+	width: 500px;
+    height: 30px;
+    background-repeat: no-repeat;
+}
+.search-bar input[type=submit] {
+	color: gray;
+	background-color: white;
+	border-radius: 0px 10px 10px 0px;
+	border-color: black;
+}
+.search-bar input[type=submit]:hover {
+	color: black;
+	background-color: orange;
+}
+.row {
+	float: left;
+	padding-left: 30px;
+	padding-bottom: 20px;
+}
+.row a{
+	text-decoration: none;
+}
+.row.link-title a:hover{
+	text-decoration: underline;
+}
+.split {
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  overflow-x: hidden;
+}
+.link-title {
+	font-size: 25;
+}
+.link-title:hover {
+	text-decoration: underline;
+}
+.link-text {
+	color: green;
+}
+.description {
+	color: gray;
 }
 </style>
 
-<form action="/" method="post">
-<input type="text" name="term" size="30">
-<input type="hidden" name="Capital" value="False">
-<input type="checkbox" name="Capital" value="True"> Capital letter
-<input type="hidden" name="Wah" value="False">
-<input type="checkbox" name="Wah" value="True"> Wah
-<input type="submit" value="Search">
+<div class="logo"> R StackOverflow </div>
+<form action="/" method="post" class="search-bar">
+	<input type="text" name="term" placeholder="Search.." size="40">
+	<input type="submit" value="Search">
+	<input type="hidden" name="Capital" value="False">
+	<input type="checkbox" name="Capital" value="True"> Capital letter
+	<input type="hidden" name="Wah" value="False">
+	<input type="checkbox" name="Wah" value="True"> Wah
 </form><hr>
-{% if result %}
+{% if result and result|length%}
+	<div class="split">
 	{% for res in result %}
-		<div>
-		<li>
-		{% for r in res %}
-			{{r}}<br>
-		{% endfor %}
-	</li>
-	</div>
+		<div class="row">
+			<!--Use http in front of link!!-->
+			<a href="{{ res.id }}">
+				<div class="link-title">
+					{{ res.title }}
+				</div>
+				<div class="link-text">
+					{{ res.id }}
+				</div>
+			</a>
+			<div class="description">
+				{{ res.description }}
+			</div>
+		</div>
 	{% endfor %}
+	</div>
 {% endif %}
