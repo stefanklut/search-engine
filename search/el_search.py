@@ -36,7 +36,7 @@ def el_search(query, data, host, init, wc=False):
 
 	# Yield all results without including any code in the body.
 	# Set include_code=True to include code. 
-	results = output_results(res['hits']['hits'])
+	result_strings = output_results(res['hits']['hits'])
 	i = 0
 	try:
 		shutil.rmtree('wordclouds')
@@ -45,7 +45,7 @@ def el_search(query, data, host, init, wc=False):
 	os.makedirs('wordclouds')
 	while True:
 		try:
-			r = results.__next__()
+			r = result_strings.__next__()
 			print(r)
 			if wc:
 				make_word_cloud(r, i)
@@ -55,16 +55,15 @@ def el_search(query, data, host, init, wc=False):
 		print('\n\n')
 		i += 1
 
-
-def generator(df, es):
-	for col_id,x in df.iterrows():
-		_index = "stackoverflow"
-		_type = "question"
-		_id = x["Id"]
-		_title = x["Title"]
-		_body = x["Body"]
-		yield {"_index":_index, "_type":_type, "id":_id, "title":_title,
-			   "body":_body}
+	results = get_results(res['hits']['hits'])
+	top_10 = []
+	while True:
+		try:
+			top_10.append(results.__next__())
+		except StopIteration:
+			print('Oh sod it')
+			break
+	return top_10
 
 
 def init_es(df, host):
@@ -96,6 +95,23 @@ def output_results(res, include_code=False):
 		# Remove all html tags from the body
 		result_string += BeautifulSoup(qb, "html.parser").text
 		yield(result_string)
+
+
+def get_results(res, include_code=False):
+	for item in res:
+		question = item['_source']
+
+		result_string = question['title'] + '\t' + str(question['id']) + '\n'
+		qb = question['body']
+		while (not include_code) and '<code>' in qb:
+			# Remove all code from the body of the question (optional)
+			qb = qb[:qb.find('<code>')]+qb[qb.find('</code>')+7:]
+
+		# Remove all html tags from the body
+		result_string += BeautifulSoup(qb, "html.parser").text
+
+		web_id = 'https://stackoverflow.com/questions/' + str(question['id'])
+		yield({'title':question['title'], 'id': web_id, 'description': result_string})
 
 
 def make_word_cloud(question, i):
