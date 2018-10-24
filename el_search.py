@@ -45,7 +45,7 @@ def el_search(query, data, host, init, wc=False):
 	os.makedirs('wordclouds')
 	while True:
 		try:
-			r = results.next()
+			r = results.__next__()
 			print(r)
 			if wc:
 				make_word_cloud(r, i)
