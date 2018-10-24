@@ -6,7 +6,7 @@ import el_search
 
 @csrf_exempt
 def search(request):
-	if request.POST:
+	if request.POST and request.POST['query'] != "":
 		return render_to_response('search.html', {'result': results(request.POST['query'])})
 	else:
 		return render_to_response('search.html')
