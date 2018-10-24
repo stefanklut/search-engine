@@ -73,14 +73,14 @@
 <div class="logo"> R StackOverflow </div>
 <form action="/" method="post">
 	<div class="search-bar">
-		<input type="text" name="term" placeholder="Search..">
+		<input type="text" name="query" placeholder="Search..">
 		<input type="submit" value="Search">
 	</div>
 	<div class="search-buttons">
-		<input type="hidden" name="Capital" value="False">
-		<input type="checkbox" name="Capital" value="True"> Capital letter
-		<input type="hidden" name="Wah" value="False">
-		<input type="checkbox" name="Wah" value="True"> Wah
+		<input type="hidden" name="capital" value="False">
+		<input type="checkbox" name="capital" value="True"> Capital letter
+		<input type="hidden" name="wah" value="False">
+		<input type="checkbox" name="wah" value="True"> Wah
 	</div>
 </form><hr>
 {% if result and result|length%}
