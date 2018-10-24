@@ -70,9 +70,10 @@
 }
 
 .slidecontainer {
+	display: flex;
     width: 250px;
-		padding-top: 10px;
-		padding-bottom: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .slider {
@@ -95,7 +96,9 @@
     appearance: none;
     width: 20px;
     height: 20px;
-    background: #4CAF50;
+	border-radius: 5px;
+	border-color: black;
+    background: orange;
     cursor: pointer;
 }
 
@@ -114,26 +117,28 @@
 		<input type="submit" value="Search">
 	</div>
 	<div class="search-buttons">
+		<b>Date:</b>
 		<input type="hidden" name="before" value="False">
 		<input type="checkbox" name="before" value="True"> Before
 		<input type="hidden" name="after" value="False">
 		<input type="checkbox" name="after" value="True"> After
 		<input type="date" name="datez" placeholder="dd-mm-jjjj">
-	</div>
-	<div class="slidecontainer">
-  	Score:
-		<input type="range" name="score" min="0.0" max="1.0" value="0.5" step="0.01" class="slider" id="score">
-		Value of score: <span id="demo"></span>
-	</div>
-	<script>
-		var slider = document.getElementById("score");
-		var output = document.getElementById("demo");
-		output.innerHTML = slider.value;
+		<br>
+		<div class="slidecontainer">
+	  	<b>Score:</b>
+		<input type="range" name="score" min="0.0" max="1.0" value="0.5" step="0.01" class="slider" id="score"><b><span id="demo"></span></b>
+		</div>
+		<script>
+			var slider = document.getElementById("score");
+			var output = document.getElementById("demo");
+			output.innerHTML = slider.value;
 
-		slider.oninput = function() {
-			output.innerHTML = this.value;
-		}
-	</script>
+			slider.oninput = function() {
+				output.innerHTML = this.value;
+			}
+		</script>
+	</div>
+
 </form><hr>
 {% if result and result|length%}
 	<div class="split">
