@@ -6,11 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt
 def search(request):
 	if request.POST:
-<<<<<<< HEAD
 		return render_to_response('search.html', {'result': get_correct_answers(request.POST)})
-=======
-		return render_to_response('search.html', {'result': request.POST['query']})
->>>>>>> 1fc7a249d309ff53f92a91bcbda7c0e59168990e
 	else:
 		return render_to_response('search.html')
 
