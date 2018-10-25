@@ -63,7 +63,7 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
     plt.figure()
     plt.bar(y_pos, y, align='center', alpha=0.5)
     plt.xticks(y_pos, x)
-    plotquery = ' '.join(query) if len(' '.join(query)) < 40 else ' '.join(query)[:37] + '...'
+    plotquery = ' '.join(query) if len(' '.join(query)) < 40 else ' '.join(query)[:37].strip() + '...'
     plt.ylabel(plotquery)
     plt.title('Year')
     plt.bar(x,y)
