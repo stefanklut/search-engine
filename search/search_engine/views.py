@@ -10,8 +10,8 @@ def search(request):
 		q = request.POST['query']
 		s = 10 # score
 		d = request.POST['date']
-		b = request.POST['before']
-		a = request.POST['after']
+		b = int(request.POST['before'])
+		a = int(request.POST['after'])
 		return render_to_response('search.html', {'result': results(q, s, d, b, a)})
 	else:
 		return render_to_response('search.html')

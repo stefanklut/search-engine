@@ -16,7 +16,7 @@ import os
 
 # es = Elasticsearch(hosts=["http://localhost:9200/"])
 
-def el_search(query, data, host, init, minimum=None, date='', before=False, after=False, wc=False):
+def el_search(query, data, host, init, minimum=None, date='', before=0, after=0, wc=False):
     es = Elasticsearch(hosts=[host])
     df = pd.read_csv(data, encoding="utf8")
 
@@ -29,24 +29,24 @@ def el_search(query, data, host, init, minimum=None, date='', before=False, afte
                     'should': [{'match': {'title': {'query': term, 'boost': 5}}} for term in query] + \
                               [{'match': {'body': {'query': term}}} for term in query],
                     'minimum_should_match': 1,
+                    'filter': []
                 }
             }
         }
 
     # add minimum stackoverflow score to query
-    print(q)
     if minimum != None:
-        q['query']['bool']['filter'] = [{'range': {'score' : {"gte" : minimum}}}]
+        q['query']['bool']['filter'] += [{'range': {'score' : {"gte" : minimum}}}]
     if date != '':
-        if before:
-            pass #HIERZOOOOOO
-        if after:
-            pass
+        if before and not after:
+            q['query']['bool']['filter'] += [{'range': {'date' : {"lte" : date}}}]
+        if after and not before:
+            q['query']['bool']['filter'] += [{'range': {'date' : {"gte" : date}}}]
     print(q)
 
     res = es.search(index="stackoverflow", doc_type="question", body=q)
     res = res['hits']['hits']
-    pprint(res)
+    #pprint(res)
 
     # Yield all results without including any code in the body.
     # Set include_code=True to include code. 
@@ -123,7 +123,7 @@ def get_results(res, include_code=False):
         result_string += BeautifulSoup(qb, "html.parser").text
 
         web_id = 'https://stackoverflow.com/questions/' + str(question['id'])
-        yield({'title':question['title'], 'id': web_id, 'description': result_string})
+        yield({'title':question['title'], 'id': web_id, 'description': result_string, 'question_date': question['date'][:10]})
 
 
 def make_word_cloud(question, i):
@@ -149,4 +149,4 @@ if __name__=="__main__":
                    default=False, type=bool)
     args = p.parse_args(sys.argv[1:])
 
-    el_search(args.query, args.d, args.H, args.i, 10, date='2008-09-16T10:40:29Z', before=False, after=True, wc=args.w)
+    el_search(args.query, args.d, args.H, args.i, 10, date='2018-10-26', before=0, after=1, wc=args.w)
