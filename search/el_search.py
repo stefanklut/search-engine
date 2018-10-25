@@ -9,6 +9,8 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import shutil
 import os
+from collections import defaultdict
+import numpy as np
 
 # Delete ES data for windows:
 # curl -X DELETE "http://localhost:9200/_all"
@@ -58,16 +60,22 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
 
     results = get_results(res)
     top = []
+    timeline = defaultdict(int)
     while True:
         try:
-            top.append(results.__next__())
+            n = results.__next__()
+            top.append(n)
+            timeline[n['question_date'][:4]] += 1
+
         except StopIteration:
             break
+    x,y = zip(*dict(timeline).items())
+    plt.bar(x,y)
+    plt.show()
     return top
 
 
 def process_query(query):
-    print(query)
     if query[0] != '?':
         q = {
                 'query': {
@@ -91,14 +99,16 @@ def process_query(query):
         }
 
     for item in query[1:]:
+        if len(item.split('=')) != 2:
+            continue
         k,v = item.split('=')
         if k == 'title' or k == 'body':
             q['query']['bool']['must'] += [{'match': {k: v}}]
-        if k == '!title' or k == '!body':
+        elif k == '!title' or k == '!body':
             q['query']['bool']['must_not'] += [{'match': {k[1:]: v}}]
-        if k == 'year':
+        elif k == 'year':
             q['query']['bool']['filter'] += [{'range': {'date' : {'gte' : v+'-01-01', 'lte': v+'-12-31'}}}]
-        if k == '!year':
+        elif k == '!year':
             q['query']['bool']['filter'] += [{'range': {'date' : {'lte' : v+'-01-01', 'gte': v+'-12-31'}}}]
     return q
 
