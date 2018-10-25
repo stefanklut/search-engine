@@ -12,7 +12,7 @@ def search(request):
 		d = request.POST['date']
 		b = int(request.POST['before'])
 		a = int(request.POST['after'])
-		return render_to_response('search.html', {'result': results(q, s, d, b, a)})
+		return render_to_response('search.html', {'result': results(q, s, d, b, a), 'query': q})
 	else:
 		return render_to_response('search.html')
 

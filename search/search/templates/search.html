@@ -66,14 +66,12 @@
 .description {
 	color: gray;
 }
-
 .slidecontainer {
 	display: inline;
     width: 250px;
 	padding-top: 20px;
 	padding-bottom: 10px;
 }
-
 .slider {
     -webkit-appearance: none;
     width: 200px;
@@ -84,11 +82,9 @@
     -webkit-transition: .2s;
     transition: opacity .2s;
 }
-
 .slider:hover {
     opacity: 1;
 }
-
 .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -99,7 +95,6 @@
     background: orange;
     cursor: pointer;
 }
-
 .slider::-moz-range-thumb {
     width: 25px;
     height: 25px;
@@ -109,6 +104,12 @@
 .date {
 	font-size: 12px;
 }
+.query_response {
+	font-size: 12px;
+	color: gray;
+	padding-left: 5px;
+	padding-bottom: 10px;
+}
 .padding {
 	padding-top: 10px;
 }
@@ -117,7 +118,11 @@
 <div class="logo"> R StackOverflow </div>
 <form action="/" method="post">
 	<div class="search-bar">
+		{% if query %}
+		<input type="text" name="query" value="{{ query }}" placeholder="Search..">
+		{% else %}
 		<input type="text" name="query" placeholder="Search..">
+		{% endif %}
 		<input type="submit" value="Search">
 	</div>
 	<div class="search-buttons">
@@ -149,6 +154,9 @@
 </form><hr>
 {% if result and result|length%}
 	<div class="split">
+	<div class="query_response">
+		Showing results for: {{ query }}
+	</div>
 	{% for res in result %}
 		<div class="row">
 			<!--Use http in front of link!!-->
