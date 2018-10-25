@@ -8,7 +8,7 @@ import el_search
 def search(request):
 	if request.POST and request.POST['query'] != "":
 		q = request.POST['query']
-		s = 10 # score
+		s = int(request.POST['score'])
 		d = request.POST['date']
 		b = int(request.POST['before'])
 		a = int(request.POST['after'])

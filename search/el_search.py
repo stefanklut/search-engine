@@ -23,16 +23,8 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
     if init:
         init_es(df.head(init), host)
 
-    q = {
-            'query': {
-                'bool': {
-                    'should': [{'match': {'title': {'query': term, 'boost': 5}}} for term in query] + \
-                              [{'match': {'body': {'query': term}}} for term in query],
-                    'minimum_should_match': 1,
-                    'filter': []
-                }
-            }
-        }
+    # ! title=hond and body=cat or period=2009
+    q = process_query(query)
 
     # add minimum stackoverflow score to query
     if minimum != None:
@@ -78,6 +70,24 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
     return top
 
 
+def process_query(query):
+    print(query)
+    if query[0] != '!':
+        q = {
+                'query': {
+                    'bool': {
+                        'should': [{'match': {'title': {'query': term, 'boost': 5}}} for term in query] + \
+                                  [{'match': {'body': {'query': term}}} for term in query],
+                        'minimum_should_match': 1,
+                        'filter': []
+                    }
+                }
+            }
+        return q
+
+
+
+
 def init_es(df, host):
     es = Elasticsearch(hosts=[host])
 
@@ -113,17 +123,19 @@ def get_results(res, include_code=False):
     for item in res:
         question = item['_source']
 
-        result_string = question['title'] + '\t' + str(question['id']) + '\n'
         qb = question['body']
         while (not include_code) and '<code>' in qb:
             # Remove all code from the body of the question (optional)
             qb = qb[:qb.find('<code>')]+qb[qb.find('</code>')+7:]
 
         # Remove all html tags from the body
-        result_string += BeautifulSoup(qb, "html.parser").text
+        result_string = BeautifulSoup(qb, "html.parser").text
+        if len(result_string) > 400:
+            result_string = result_string[:400] + '...'
 
         web_id = 'https://stackoverflow.com/questions/' + str(question['id'])
-        yield({'title':question['title'], 'id': web_id, 'description': result_string, 'question_date': question['date'][:10]})
+        date = question['date'][:10]
+        yield({'title':question['title'], 'id': web_id, 'description': result_string, 'question_date': date})
 
 
 def make_word_cloud(question, i):
