@@ -135,11 +135,7 @@ def output_results(res, include_code=False):
 
 
 def get_results(res, include_code=False):
-    # a = output_results(res)
-    total_result = ' '.join([i for i in output_results(res)])
-    make_word_cloud(total_result)
-    # for i in a:
-    #     pprint(i)
+    make_word_cloud(' '.join([i for i in output_results(res)]))
     for item in res:
         question = item['_source']
 
