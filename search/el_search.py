@@ -72,7 +72,7 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
 
 def process_query(query):
     print(query)
-    if query[0] != '!':
+    if query[0] != '?':
         q = {
                 'query': {
                     'bool': {
@@ -84,7 +84,27 @@ def process_query(query):
                 }
             }
         return q
+    q = {
+            'query': {
+                'bool': {
+                    'must': [],
+                    'must_not': [],
+                    'filter': []
+                }
+            }
+        }
 
+    for item in query[1:]:
+        k,v = item.split('=')
+        if k == 'title' or k == 'body':
+            q['query']['bool']['must'] += [{'match': {k: v}}]
+        if k == '!title' or k == '!body':
+            q['query']['bool']['must_not'] += [{'match': {k[1:]: v}}]
+        if k == 'year':
+            q['query']['bool']['filter'] += [{'range': {'date' : {'gte' : v+'-01-01', 'lte': v+'-12-31'}}}]
+        if k == '!year':
+            q['query']['bool']['filter'] += [{'range': {'date' : {'lte' : v+'-01-01', 'gte': v+'-12-31'}}}]
+    return q
 
 
 
