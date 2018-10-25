@@ -9,6 +9,8 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import shutil
 import os
+from collections import defaultdict
+import numpy as np
 
 # Delete ES data for windows:
 # curl -X DELETE "http://localhost:9200/_all"
@@ -41,35 +43,37 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
     # Yield all results without including any code in the body.
     # Set include_code=True to include code.
     result_strings = output_results(res)
-    i = 0
-    try:
-        shutil.rmtree('wordclouds')
-    except OSError:
-        pass
-    os.makedirs('wordclouds')
-    while True:
-        try:
-            r = result_strings.__next__()
-            if wc:
-                make_word_cloud(r, i)
-        except StopIteration:
-            break
-        i += 1
+    make_word_cloud(' '.join([i for i in output_results(res)]))
 
     results = get_results(res)
-    top = []
+
+    returned_results = []
+    timeline = defaultdict(int)
     while True:
         try:
-            top.append(results.__next__())
+            n = results.__next__()
+            returned_results.append(n)
+            timeline[n['question_date'][:4]] += 1
         except StopIteration:
             break
-    return top
+
+    x = sorted(dict(timeline).keys())
+    y = [timeline[i] for i in x]
+    y_pos = np.arange(len(x))
+    plt.figure()
+    plt.bar(y_pos, y, align='center', alpha=0.5)
+    plt.xticks(y_pos, x)
+    plt.ylabel('Questions asked related to this query')
+    plt.title('Year')
+    plt.bar(x,y)
+    plt.savefig('plots/'+'_'.join(query)+'.jpg')
+    return returned_results
 
 
 def process_query(query):
-    print(query)
     if query[0] != '?':
         q = {
+                'size' : 20,
                 'query': {
                     'bool': {
                         'should': [{'match': {'title': {'query': term, 'boost': 5}}} for term in query] + \
@@ -81,6 +85,7 @@ def process_query(query):
             }
         return q
     q = {
+            'size' : 20,
             'query': {
                 'bool': {
                     'must': [],
@@ -91,14 +96,16 @@ def process_query(query):
         }
 
     for item in query[1:]:
+        if len(item.split('=')) != 2:
+            continue
         k,v = item.split('=')
         if k == 'title' or k == 'body':
             q['query']['bool']['must'] += [{'match': {k: v}}]
-        if k == '!title' or k == '!body':
+        elif k == '!title' or k == '!body':
             q['query']['bool']['must_not'] += [{'match': {k[1:]: v}}]
-        if k == 'year':
+        elif k == 'year':
             q['query']['bool']['filter'] += [{'range': {'date' : {'gte' : v+'-01-01', 'lte': v+'-12-31'}}}]
-        if k == '!year':
+        elif k == '!year':
             q['query']['bool']['filter'] += [{'range': {'date' : {'lte' : v+'-01-01', 'gte': v+'-12-31'}}}]
     return q
 
@@ -121,10 +128,9 @@ def init_es(df, host):
 
 def output_results(res, include_code=False):
     for item in res:
-        result_string = ''
         question = item['_source']
         qb = question['body']
-        result_string += question['title'] + '\t' + str(question['id']) + '\n'
+        result_string = question['title'] + '\n'
 
         while (not include_code) and '<code>' in qb:
             # Remove all code from the body of the question (optional)
@@ -154,12 +160,14 @@ def get_results(res, include_code=False):
         yield({'title':question['title'], 'id': web_id, 'description': result_string, 'question_date': date, 'score': question['score']})
 
 
-def make_word_cloud(question, i):
-    wc = WordCloud().generate(question)
+def make_word_cloud(question):
+    wc = WordCloud(width=1600, height=900, background_color=None, mode='RGBA').generate(question)
+    plt.figure(figsize=(16,9), facecolor='k')
     plt.imshow(wc)
     plt.axis('off')
-    plt.savefig('wordclouds/' + str(i) + '.png')
-
+    plt.tight_layout(pad=0)
+    plt.savefig('wordclouds/wordcloud.jpg')
+    
 
 if __name__=="__main__":
     import sys
@@ -176,5 +184,5 @@ if __name__=="__main__":
     p.add_argument("-w", help="show word cloud of questions", \
                    default=False, type=bool)
     args = p.parse_args(sys.argv[1:])
-    
+
     el_search(args.query, args.d, args.H, args.i, wc=args.w)
