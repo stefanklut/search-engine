@@ -17,4 +17,4 @@ def search(request):
 		return render_to_response('search.html')
 
 def results(q, s, d, b, a):
-	return el_search.el_search(q.split(), 'data/Questions.csv', 'http://localhost:9200/', 0, minimum=s, date=d, before=b, after=a)
+	return el_search.el_search(q.split(), 'data/Questions.csv', 'http://localhost:9200/', 0, minimum=s, date=d, before=b, after=a, wc=True)
