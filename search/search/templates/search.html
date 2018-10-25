@@ -50,10 +50,6 @@
 .row.link-title a:hover{
 	text-decoration: underline;
 }
-.split {
-  width: 50%;
-  overflow-x: hidden;
-}
 .link-title {
 	font-size: 25;
 }
@@ -113,6 +109,20 @@
 .padding {
 	padding-top: 10px;
 }
+.left {
+	left: 0;
+}
+.right {
+	float: right;
+	right: 0;
+}
+.split {
+	position: relative;
+	display: inline-block;
+	width: 50%;
+	overflow-x: hidden;
+}
+
 </style>
 
 <div class="logo"> R StackOverflow </div>
@@ -153,9 +163,9 @@
 
 </form><hr>
 {% if result and result|length%}
-	<div class="split">
+	<div class="split left">
 	<div class="query_response">
-		Showing results for: {{ query }}
+		Showing results for query: {{ query }}
 	</div>
 	{% for res in result %}
 		<div class="row">
@@ -176,5 +186,11 @@
 			</div>
 		</div>
 	{% endfor %}
+	</div>
+	<div class=" split right">
+		<div class="query_response">
+			Showing graphs for query: {{ query }}
+		</div>
+		<img src="search/static/wordclouds/0.png" alt="My image">
 	</div>
 {% endif %}
