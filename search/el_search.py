@@ -44,19 +44,19 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
     # Set include_code=True to include code.
     result_strings = output_results(res)
     i = 0
-    try:
-        shutil.rmtree('wordclouds')
-    except OSError:
-        pass
-    os.makedirs('wordclouds')
-    while True:
-        try:
-            r = result_strings.__next__()
-            if wc:
-                make_word_cloud(r, i)
-        except StopIteration:
-            break
-        i += 1
+    # try:
+    #     shutil.rmtree('wordclouds')
+    # except OSError:
+    #     pass
+    # os.makedirs('wordclouds')
+    # while True:
+    #     try:
+    #         r = result_strings.__next__()
+    #         if wc:
+    #             make_word_cloud(r, i)
+    #     except StopIteration:
+    #         break
+    #     i += 1
 
     results = get_results(res)
     top = []
@@ -131,10 +131,9 @@ def init_es(df, host):
 
 def output_results(res, include_code=False):
     for item in res:
-        result_string = ''
         question = item['_source']
         qb = question['body']
-        result_string += question['title'] + '\t' + str(question['id']) + '\n'
+        result_string = question['title'] + '\n'
 
         while (not include_code) and '<code>' in qb:
             # Remove all code from the body of the question (optional)
@@ -146,6 +145,7 @@ def output_results(res, include_code=False):
 
 
 def get_results(res, include_code=False):
+    make_word_cloud(' '.join([i for i in output_results(res)]))
     for item in res:
         question = item['_source']
 
@@ -164,12 +164,14 @@ def get_results(res, include_code=False):
         yield({'title':question['title'], 'id': web_id, 'description': result_string, 'question_date': date, 'score': question['score']})
 
 
-def make_word_cloud(question, i):
-    wc = WordCloud().generate(question)
+def make_word_cloud(question):
+    wc = WordCloud(width=1600, height=900, background_color=None, mode='RGBA').generate(question)
+    plt.figure( figsize=(16,9), facecolor='k')
     plt.imshow(wc)
     plt.axis('off')
-    plt.savefig('wordclouds/' + str(i) + '.png')
-
+    plt.tight_layout(pad=0)
+    plt.savefig('wordcloud.jpg')
+    
 
 if __name__=="__main__":
     import sys
@@ -186,5 +188,5 @@ if __name__=="__main__":
     p.add_argument("-w", help="show word cloud of questions", \
                    default=False, type=bool)
     args = p.parse_args(sys.argv[1:])
-    
+
     el_search(args.query, args.d, args.H, args.i, wc=args.w)
