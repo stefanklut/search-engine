@@ -6,6 +6,12 @@
 	font-size: 30;
 	padding-left: 5px
 }
+img {
+	width: 95%;
+	padding-left: 5px;
+	padding-right: 10px;
+	padding-bottom: 20px;
+}
 .search-bar {
 	display: flex;
 	width: 50%;
@@ -192,6 +198,7 @@
 			Showing graphs for query: {{ query }}
 		</div>
 		{% load static %}
-		<img src="{% static "wordcloud.jpg" %}" alt="My image">
+		<img src="{% static "wordcloud.jpg" %}" alt="wordcloud">
+		<img src="{% static "timeline.jpg" %}" alt="timeline">
 	</div>
 {% endif %}

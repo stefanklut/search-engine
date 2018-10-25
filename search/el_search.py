@@ -66,7 +66,7 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
     plt.ylabel('Questions asked related to this query')
     plt.title('Year')
     plt.bar(x,y)
-    plt.savefig('plots/'+'_'.join(query)+'.jpg')
+    plt.savefig('media/timeline.jpg')
     return returned_results
 
 
@@ -166,7 +166,7 @@ def make_word_cloud(question):
     plt.imshow(wc)
     plt.axis('off')
     plt.tight_layout(pad=0)
-    plt.savefig('wordclouds/wordcloud.jpg')
+    plt.savefig('media/wordcloud.jpg')
     
 
 if __name__=="__main__":

@@ -18,3 +18,4 @@ def search(request):
 
 def results(q, s, d, b, a):
 	return el_search.el_search(q.split(), 'data/Questions.csv', 'http://localhost:9200/', 0, minimum=s, date=d, before=b, after=a, wc=True)
+	# return [{'title':'worst', 'id':'4', 'description':'gemaakt van paarden', 'question_date':'ergens in maart', 'score':'nee'}]
