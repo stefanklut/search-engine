@@ -42,7 +42,7 @@
 	float: left;
 	padding-left: 30px;
 	padding-bottom: 20px;
-	width: 100%
+	width: 100%-30px;
 }
 .row a{
 	text-decoration: none;
@@ -106,6 +106,9 @@
     background: #4CAF50;
     cursor: pointer;
 }
+.date {
+	font-size: 10px
+}
 .padding {
 	padding-top: 10px;
 }
@@ -159,6 +162,9 @@
 			</a>
 			<div class="description">
 				{{ res.description }}
+			</div>
+			<div class="date">
+				Date: {{ res.question_date }}
 			</div>
 		</div>
 	{% endfor %}
