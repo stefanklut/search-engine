@@ -34,14 +34,12 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
             q['query']['bool']['filter'] += [{'range': {'date' : {"lte" : date}}}]
         if after and not before:
             q['query']['bool']['filter'] += [{'range': {'date' : {"gte" : date}}}]
-    print(q)
 
     res = es.search(index="stackoverflow", doc_type="question", body=q)
     res = res['hits']['hits']
-    #pprint(res)
 
     # Yield all results without including any code in the body.
-    # Set include_code=True to include code. 
+    # Set include_code=True to include code.
     result_strings = output_results(res)
     i = 0
     try:
@@ -52,8 +50,6 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
     while True:
         try:
             r = result_strings.__next__()
-            # print('\n\n')
-            # print(r)
             if wc:
                 make_word_cloud(r, i)
         except StopIteration:
@@ -122,7 +118,7 @@ def init_es(df, host):
         b = {"id":x["Id"], "title":x["Title"], "body":x["Body"], "score":x["Score"], "date": x["CreationDate"]}
         es.index(index=_index, doc_type=_type, id=col_id, body=b)
 
-    
+
 def output_results(res, include_code=False):
     for item in res:
         result_string = ''
@@ -155,7 +151,7 @@ def get_results(res, include_code=False):
 
         web_id = 'https://stackoverflow.com/questions/' + str(question['id'])
         date = question['date'][:10]
-        yield({'title':question['title'], 'id': web_id, 'description': result_string, 'question_date': date})
+        yield({'title':question['title'], 'id': web_id, 'description': result_string, 'question_date': date, 'score': question['score']})
 
 
 def make_word_cloud(question, i):
@@ -180,5 +176,5 @@ if __name__=="__main__":
     p.add_argument("-w", help="show word cloud of questions", \
                    default=False, type=bool)
     args = p.parse_args(sys.argv[1:])
-
-    el_search(args.query, args.d, args.H, args.i, 10, date='2018-10-26', before=0, after=1, wc=args.w)
+    
+    el_search(args.query, args.d, args.H, args.i, wc=args.w)
