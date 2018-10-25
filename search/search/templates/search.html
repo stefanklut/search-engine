@@ -70,16 +70,15 @@
 }
 
 .slidecontainer {
-	display: inline-flex;
+	display: inline;
     width: 250px;
-	padding-top: 10px;
+	padding-top: 20px;
 	padding-bottom: 10px;
 }
 
 .slider {
-	flex: 1;
     -webkit-appearance: none;
-    width: 100%;
+    width: 200px;
     height: 10px;
     background: #d3d3d3;
     outline: none;
@@ -109,6 +108,9 @@
     background: #4CAF50;
     cursor: pointer;
 }
+.padding {
+	padding-top: 10px;
+}
 </style>
 
 <div class="logo"> R StackOverflow </div>
@@ -119,25 +121,28 @@
 	</div>
 	<div class="search-buttons">
 		<b>Date:</b>
-		<input type="hidden" name="before" value="False">
-		<input type="checkbox" name="before" value="True"> Before
-		<input type="hidden" name="after" value="False">
-		<input type="checkbox" name="after" value="True"> After
-		<input type="date" name="datez" placeholder="dd-mm-jjjj">
+		<input type="hidden" name="before" value=0>
+		<input type="checkbox" name="before" value=1> Before
+		<input type="hidden" name="after" value=0>
+		<input type="checkbox" name="after" value=1> After
+		<input type="date" name="date" placeholder="dd-mm-jjjj">
 		<br>
-		<div class="slidecontainer">
-	  	<b>Score:</b>
-		<input type="range" name="score" min="0.0" max="1.0" value="0.5" step="0.01" class="slider" id="score"><b><span id="demo"></span></b>
-		</div>
-		<script>
-			var slider = document.getElementById("score");
-			var output = document.getElementById("demo");
-			output.innerHTML = slider.value;
+		<div class="padding">
+			<div class="slidecontainer">
+		  	<b>Score:</b>
+			<input type="range" name="score" min="-200" max="1000" value="-300" step="1" class="slider" id="score"><b><span id="demo"></span></b>
+			</div>
+			<script>
+				var slider = document.getElementById("score");
+				var output = document.getElementById("demo");
+				output.innerHTML = slider.value;
 
-			slider.oninput = function() {
-				output.innerHTML = this.value;
-			}
-		</script>
+				slider.oninput = function() {
+					output.innerHTML = this.value;
+				}
+			</script>
+		</div>
+
 	</div>
 
 </form><hr>
