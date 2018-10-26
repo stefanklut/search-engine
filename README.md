@@ -22,6 +22,6 @@ This wiki will contain a page for all of the 6 requirements set for this assignm
 #### Instructions for running the search engine:
 To set up elastic search: run the command 'python el_search r -i X' in the command line, where X is the number of data lines you want to import (we have about 190000 entries).
 
-To set up the server: python manage.py runserver 8080
+To set up the server: get to the search folder within the search-engine github. python manage.py runserver 8080
 
 For more information please consult the wiki.
