@@ -39,6 +39,7 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
 
     res = es.search(index="stackoverflow", doc_type="question", body=q)
     res = res['hits']['hits']
+    pprint([(r['_score'], r['_source']['title']) for r in res])
 
     # Yield all results without including any code in the body.
     # Set include_code=True to include code.
@@ -162,12 +163,13 @@ def get_results(res, include_code=False):
 
 
 def make_word_cloud(question):
-    wc = WordCloud(width=1600, height=900, background_color=None, mode='RGBA').generate(question)
-    plt.figure(figsize=(16,9), facecolor='k')
-    plt.imshow(wc)
-    plt.axis('off')
-    plt.tight_layout(pad=0)
-    plt.savefig('media/wordcloud.jpg')
+    if len(question):
+        wc = WordCloud(width=1600, height=900, background_color=None, mode='RGBA', max_words=50).generate(question)
+        plt.figure(figsize=(16,9), facecolor='k')
+        plt.imshow(wc)
+        plt.axis('off')
+        plt.tight_layout(pad=0)
+        plt.savefig('media/wordcloud.jpg')
     
 
 if __name__=="__main__":
