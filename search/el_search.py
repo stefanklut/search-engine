@@ -58,7 +58,14 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
         except StopIteration:
             break
 
+    mx = int(max(timeline))
+    mn = int(min(timeline))
+    tl = {str(i):0 for i in range(mn, mx) if str(i) not in timeline}
+    timeline = dict(timeline)
+    timeline = {**timeline, **tl}
+
     x = sorted(dict(timeline).keys())
+    
     y = [timeline[i] for i in x]
     y_pos = np.arange(len(x))
     plt.figure()
