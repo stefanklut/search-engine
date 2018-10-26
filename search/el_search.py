@@ -39,7 +39,6 @@ def el_search(query, data, host, init, minimum=None, date='', before=0, after=0,
 
     res = es.search(index="stackoverflow", doc_type="question", body=q)
     res = res['hits']['hits']
-    pprint([(r['_score'], r['_source']['title']) for r in res])
 
     # Yield all results without including any code in the body.
     # Set include_code=True to include code.
